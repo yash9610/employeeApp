@@ -5,6 +5,7 @@ const StudentModel = require('./studentschema');
 const EmployeeDetails = require('./EmployeeDetails');
 const Salary = require('./SalaryDetails'); 
 
+
 // Connecting to database
 const query = 'mongodb+srv://yashmittal964:Yash%40123@cluster1.53tz1.mongodb.net/'
 
@@ -25,21 +26,38 @@ mongoose.connect(db, {
 });
 
 router.use(express.json());
-
-router.get('/student/:id', async (req, res) => {
-    const { id } = req.params; 
-    console.log("Received id:", id); // Get ID from the request params
-try {
-  const student = await StudentModel.findOne({ StudentId: String(id) });  // Query by StudentId field, assuming it is a string or number
-  if (!student) {
-    return res.status(404).json({ message: 'Student not found' });
-  }
-  res.json(student);
-} catch (error) {
-  res.status(500).json({ message: 'Server error', error: error.message });
-}
-});
-
+// In routes/students.js
+// router.put('/students/updateByName', async (req, res) => {
+//     const { Name, updatedData } = req.body;
+//     try {
+//       if (!Name || !updatedData) {
+//         return res.status(400).json({ error: "Name and updatedData fields are required." });
+//       }
+      
+//       const result = await Student.updateMany({ name: Name }, { $set: updatedData });
+      
+//       if (result.modifiedCount === 0) {
+//         return res.status(404).json({ message: "No records found to update." });
+//       }
+  
+//       res.json({ message: 'Records updated successfully', result });
+//     } catch (error) {
+//       console.error('Error updating records:', error.message);
+//       res.status(500).json({ error: error.message });
+//     }
+//   });
+  
+router.get('/students/:studentId', async (req, res) => {
+    try {
+      const student = await StudentModel.findOne({ StudentId: req.params.studentId });
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      res.json(student);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 // POST route to add a student
 router.post('/addStudent', async (req, res) => {
     try {
@@ -347,47 +365,37 @@ router.get('/add3', async function (req, res){
 })
 
 
-//UpdateOne//
-router.put('/save', async function (req, res) {
-    
-
+// Update student by ID (instead of Name)
+router.put('/update/:studentId', async (req, res) => {
     try {
-
-        const dataArray = [{
-            StudentId: 102,
-            Name: "Harsh",
-            Phone_No: "805-674-2157",
-            Country_code: "+91",
-            Age: 23, 
-        },
-        {
-            StudentId: 104,
-            Name: "sam",
-            Phone_No: "805-674-2121",
-            Country_code: "+11",
-            Age: 20, 
-
-        }]
-
-        console.log(dataArray,"dataArray")
-        // const studentIdToUpdate = 104; 
-        const updateData = { 
-            Name: "Sam pole", // New data you want to set
-            Phone_No: "805-674-2000", // New phone number, for example
-            Age: 60// Updated age, for example
-        };
-
-        const datasaved1 = await StudentModel.updateOne(
-            { Age: 20}, // Query to find the student
-            { $set: updateData }
-        );
-        res.status(201).send({"data": datasaved1}); 
+        const { studentId } = req.params;
         
+        // Find student by StudentId (not MongoDB _id)
+        const student = await StudentModel.findOne({ StudentId: studentId });
+        
+        if (!student) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        // Update the student with the new data
+        const updatedStudent = await StudentModel.findOneAndUpdate(
+            { StudentId: studentId },
+            { $set: req.body },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            message: 'Student updated successfully',
+            data: updatedStudent
+        });
     } catch (error) {
-        res.status(500).send({"error": "Error saving data", "details": error.message});
+        console.error('Error updating student:', error);
+        res.status(500).json({ 
+            error: 'Error updating student',
+            details: error.message 
+        });
     }
 });
-
 //Salary table
 
 router.get('/join', async function (req, res) {

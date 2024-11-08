@@ -5,9 +5,7 @@ const StudentSchema = new mongoose.Schema({
     Name: String,
     Phone_No: String,
     Country_code: String,
-    Age: Number,
-    Dob: Date
-    
+    Age: Number,    
 });
 
 module.exports = mongoose.model(
