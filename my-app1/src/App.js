@@ -5,6 +5,7 @@ import Form from './Form';
 import ReadData from './ReadData';
 import FetchApi from './FetchApi';
 import UpdateStudent from './UpdateStudent';
+import DeleteData from './DeleteData';
 
 
 
@@ -21,6 +22,7 @@ function App() {
           {/* Route to display student details */}
           <Route path="/form" element={<Form />} />
           <Route path="/UpdateStudent/:studentId" element={<UpdateStudent />} />
+          <Route path="/DeleteData/:studentId" element={<DeleteData />} />
         </Routes>
       </Router>
     </div>

@@ -26,26 +26,6 @@ mongoose.connect(db, {
 });
 
 router.use(express.json());
-// In routes/students.js
-// router.put('/students/updateByName', async (req, res) => {
-//     const { Name, updatedData } = req.body;
-//     try {
-//       if (!Name || !updatedData) {
-//         return res.status(400).json({ error: "Name and updatedData fields are required." });
-//       }
-      
-//       const result = await Student.updateMany({ name: Name }, { $set: updatedData });
-      
-//       if (result.modifiedCount === 0) {
-//         return res.status(404).json({ message: "No records found to update." });
-//       }
-  
-//       res.json({ message: 'Records updated successfully', result });
-//     } catch (error) {
-//       console.error('Error updating records:', error.message);
-//       res.status(500).json({ error: error.message });
-//     }
-//   });
   
 router.get('/students/:studentId', async (req, res) => {
     try {
@@ -203,29 +183,29 @@ router.patch('/edit', async function (req, res) {
 });
 
 //Delete Function//
-router.delete('/delete', async function (req, res) {
+// router.delete('/delete', async function (req, res) {
 
-    try {
+//     try {
 
-        const dataArr = [{
-            StudentId: 102,
-            Name: "Harsh",
-            Phone_No: "805-674-2157",
-            Country_code: "+91",
-            Age: 23, 
-        }]
+//         const dataArr = [{
+//             StudentId: 102,
+//             Name: "Harsh",
+//             Phone_No: "805-674-2157",
+//             Country_code: "+91",
+//             Age: 23, 
+//         }]
 
-        console.log(dataArr,"dataArr1")
+//         console.log(dataArr,"dataArr1")
 
-        const savedata1 = await StudentModel.deleteOne(
-            { Age:23}, // Query to find the student
-        );
-        res.status(201).send({"data": savedata1});  
+//         const savedata1 = await StudentModel.deleteOne(
+//             { Age:23}, // Query to find the student
+//         );
+//         res.status(201).send({"data": savedata1});  
         
-    } catch (error) {
-        res.status(500).send({"error": "Error saving data", "details": error.message});
-    }
-});
+//     } catch (error) {
+//         res.status(500).send({"error": "Error saving data", "details": error.message});
+//     }
+// });
 
 //find//
 
@@ -297,38 +277,38 @@ router.get('/add1', async function (req, res){
 })
 
 //findOneAndDelete//
-router.delete('/add2', async function (req, res){
+// router.delete('/add2', async function (req, res){
 
-    try {
+//     try {
 
-        const data2= [{
-            StudentId: 102,
-            Name: "Harsh",
-            Phone_No: "805-674-2157",
-            Country_code: "+91",
-            Age: 23, 
-        },
-        {
-            StudentId: 105,
-            Name: "sam",
-            Phone_No: "805-674-2121",
-            Country_code: "+11",
-            Age: 20,
-        },
-            {
-                StudentId: 103,
-                Name: "Harsh",
-                Phone_No: "805-674-2123",
-                Country_code: "+92",
-                Age: 21, 
-            }]
-            console.log(data2, "data2");
-            const svedta = await StudentModel.findOneAndDelete({_id: "671f2c39f15deeae3595e207"});
-    res.status(201).send({"data": svedta}); 
-} catch (error) {
-    res.status(500).send({"error": "Error saving data", "details": error.message});
-}  
-})
+//         const data2= [{
+//             StudentId: 102,
+//             Name: "Harsh",
+//             Phone_No: "805-674-2157",
+//             Country_code: "+91",
+//             Age: 23, 
+//         },
+//         {
+//             StudentId: 105,
+//             Name: "sam",
+//             Phone_No: "805-674-2121",
+//             Country_code: "+11",
+//             Age: 20,
+//         },
+//             {
+//                 StudentId: 103,
+//                 Name: "Harsh",
+//                 Phone_No: "805-674-2123",
+//                 Country_code: "+92",
+//                 Age: 21, 
+//             }]
+//             console.log(data2, "data2");
+//             const svedta = await StudentModel.findOneAndDelete({_id: "671f2c39f15deeae3595e207"});
+//     res.status(201).send({"data": svedta}); 
+// } catch (error) {
+//     res.status(500).send({"error": "Error saving data", "details": error.message});
+// }  
+// })
 
 //findOneAndUpdate
 router.get('/add3', async function (req, res){
@@ -396,6 +376,32 @@ router.put('/update/:studentId', async (req, res) => {
         });
     }
 });
+
+//Delete data
+router.delete('/delete/:studentId', async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        
+        // Find and delete the student by StudentId
+        const deletedStudent = await StudentModel.findOneAndDelete({ StudentId: studentId });
+        
+        if (!deletedStudent) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        res.status(200).json({
+            message: 'Student deleted successfully',
+            data: deletedStudent
+        });
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        res.status(500).json({ 
+            error: 'Error deleting student',
+            details: error.message 
+        });
+    }
+});
+
 //Salary table
 
 router.get('/join', async function (req, res) {

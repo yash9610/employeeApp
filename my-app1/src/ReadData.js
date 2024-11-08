@@ -63,6 +63,9 @@ const ReadData = () => {
           <p><strong>Age:</strong> {student.Age}</p>
           {/* Button to navigate to UpdateStudent page */}
           <button onClick={() => navigate(`/UpdateStudent/${student.StudentId}`)}>Update Data</button>
+          <button onClick={() => navigate('/DeleteData')} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+  Delete Data
+</button>
         </div>
       )}
     </div>
