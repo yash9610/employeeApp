@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const api = require('./api');
+const cors = require('cors');
 
-const port = 3000;
+
+const port = 3001;
 const app = express();
 
 app.listen(port, function () {  
@@ -14,5 +16,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Parses the text as json
 app.use(bodyParser.json());
+app.use(cors()); 
 
 app.use('/api', api);   

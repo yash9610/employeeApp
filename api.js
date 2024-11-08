@@ -26,67 +26,101 @@ mongoose.connect(db, {
 
 router.use(express.json());
 
-//Create function//
-router.get('/getStudent', async function (req, res){
-    try{
-
-        const data1 = [{
-            
-            StudentId: 103,
-            Name: "Harish",
-            Phone_No: "805-674-2123",
-            Country_code: "+92",
-            Age: 21 
-    },
-    {
-        
-            StudentId: 110,
-            Name: "Shivam",
-            Phone_No: "805-674-1340",
-            Country_code: "+11",
-            Age: 11, 
-        
-        
-    }]
-
-        // lookup 
-
-    const saveddata = await data1.flatMap(Object.values);
-    console.log(saveddata);
-
-
-
-    res.status(201).send({"data": saveddata}); 
+router.get('/student/:id', async (req, res) => {
+    const { id } = req.params; 
+    console.log("Received id:", id); // Get ID from the request params
+try {
+  const student = await StudentModel.findOne({ StudentId: String(id) });  // Query by StudentId field, assuming it is a string or number
+  if (!student) {
+    return res.status(404).json({ message: 'Student not found' });
+  }
+  res.json(student);
 } catch (error) {
-    res.status(500).send({"error": "Error saving data", "details": error.message});
+  res.status(500).json({ message: 'Server error', error: error.message });
 }
-})
+});
+
+// POST route to add a student
+router.post('/addStudent', async (req, res) => {
+    try {
+        const student = new StudentModel(req.body);
+        await student.save();
+        res.status(201).send({ message: 'Student added successfully' });
+    } catch (error) {
+        res.status(400).send({ error: 'Failed to add student', details: error.message });
+    }
+});
+
+//Create function//
+// router.get('/getStudent', async function (req, res){
+//     try{
+
+//         const data1 = [{
+            
+//             StudentId: 103,
+//             Name: "Harish",
+//             Phone_No: "805-674-2123",
+//             Country_code: "+92",
+//             Age: 21 
+//     },
+//     {
+        
+//             StudentId: 110,
+//             Name: "Shivam",
+//             Phone_No: "805-674-1340",
+//             Country_code: "+11",
+//             Age: 11, 
+//     },
+//     {
+
+//             StudentId: 120,
+//             Name: "Shivansh",
+//             Phone_No: "805-674-1980",
+//             Country_code: "+91",
+//             Age: 14, 
+//         }
+        
+        
+//     ]
+
+//         // lookup 
+
+//     const saveddata = await data1.flatMap(Object.values);
+//     console.log(saveddata);
+
+
+
+//     res.status(201).send({"data": saveddata}); 
+// } catch (error) {
+//     res.status(500).send({"error": "Error saving data", "details": error.message});
+// }
+// })
 
 //Create function//
 router.get('/get', async function (req, res){
     try{
-        const data1 = [{
+    //     const data5 = [{
             
-                StudentId: 103,
-                Name: "Harish",
-                Phone_No: "805-674-2123",
-                Country_code: "+92",
-                Age: 21 
-        },
-        {
+    //             StudentId: 103,
+    //             Name: "Harish",
+    //             Phone_No: "805-674-2123",
+    //             Country_code: "+92",
+    //             Age: 21 
+    //     },
+    //     {
             
-                StudentId: 110,
-                Name: "Shivam",
-                Phone_No: "805-674-1340",
-                Country_code: "+91",
-                Age: 11, 
+    //             StudentId: 110,
+    //             Name: "Shivam",
+    //             Phone_No: "805-674-1340",
+    //             Country_code: "+91",
+    //             Age: 11, 
             
             
-        }]
-        console.log(data1, "data1");
-        // const studentIdToInsert = 103;
+    //     }]
+    //     console.log(data5, "data1");
+    //     // const studentIdToInsert = 103;
     
-    const saveddata = await StudentModel.insertMany(data1);
+    // const saveddata = await StudentModel.insertMany(data5);
     const result = await StudentModel.aggregate([
         {
             $lookup: {
@@ -340,11 +374,11 @@ router.put('/save', async function (req, res) {
         const updateData = { 
             Name: "Sam pole", // New data you want to set
             Phone_No: "805-674-2000", // New phone number, for example
-            Age: 28 // Updated age, for example
+            Age: 60// Updated age, for example
         };
 
         const datasaved1 = await StudentModel.updateOne(
-            { Age: 34}, // Query to find the student
+            { Age: 20}, // Query to find the student
             { $set: updateData }
         );
         res.status(201).send({"data": datasaved1}); 
